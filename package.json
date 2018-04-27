@@ -3,7 +3,7 @@
     "displayName": "css-blocks",
     "description": "css blocks autocomplete and go to definitions",
     "version": "0.0.1",
-    "publisher": "vunguyentuan",
+    "publisher": "vunguyen",
     "engines": {
         "vscode": "^1.22.0"
     },
