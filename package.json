@@ -14,9 +14,10 @@
         "css-blocks"
     ],
     "repository": {
+        "type": "git",
         "url": "https://github.com/vunguyentuan/vscode-css-blocks"
     },
-    "icon": "https://raw.githubusercontent.com/vunguyentuan/vscode-css-blocks/master/logo.png",
+    "icon": "logo.png",
     "activationEvents": [
         "onLanguage:typescriptreact",
         "onLanguage:javascriptreact"
