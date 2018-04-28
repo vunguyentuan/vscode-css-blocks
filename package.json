@@ -3,13 +3,17 @@
     "displayName": "css-blocks",
     "description": "css blocks autocomplete and go to definitions",
     "version": "0.0.1",
-    "publisher": "vunguyen",
+    "publisher": "vunguyentuan",
     "engines": {
         "vscode": "^1.22.0"
     },
     "categories": [
-        "Other"
+        "Languages"
     ],
+    "keywords": [
+        "css-blocks"
+    ],
+    "icon": "https://raw.githubusercontent.com/vunguyentuan/vscode-css-blocks/master/logo.png",
     "activationEvents": [
         "onLanguage:typescriptreact",
         "onLanguage:javascriptreact"
