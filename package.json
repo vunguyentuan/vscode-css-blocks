@@ -1,6 +1,6 @@
 {
   "name": "vscode-css-blocks",
-  "displayName": "Css Blocks",
+  "displayName": "CSS Blocks",
   "description": "css blocks autocomplete and go to definitions",
   "version": "0.0.4",
   "publisher": "vunguyentuan",
