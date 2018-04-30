@@ -2,7 +2,7 @@
   "name": "vscode-css-blocks",
   "displayName": "Css Blocks",
   "description": "css blocks autocomplete and go to definitions",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "vunguyentuan",
   "engines": {
     "vscode": "^1.22.0"
