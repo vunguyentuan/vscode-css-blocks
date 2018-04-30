@@ -1,43 +1,39 @@
 {
-    "name": "vscode-css-blocks",
-    "displayName": "Css Blocks",
-    "description": "css blocks autocomplete and go to definitions",
-    "version": "0.0.2",
-    "publisher": "vunguyentuan",
-    "engines": {
-        "vscode": "^1.22.0"
-    },
-    "categories": [
-        "Languages"
-    ],
-    "keywords": [
-        "css-blocks"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/vunguyentuan/vscode-css-blocks"
-    },
-    "icon": "logo.png",
-    "activationEvents": [
-        "onLanguage:typescriptreact",
-        "onLanguage:javascriptreact"
-    ],
-    "main": "./extension",
-    "contributes": {
-        "commands": []
-    },
-    "scripts": {
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
-    },
-    "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
-        "eslint": "^4.11.0",
-        "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
-    },
-    "dependencies": {
-        "lodash": "^4.17.10"
-    }
+  "name": "vscode-css-blocks",
+  "displayName": "Css Blocks",
+  "description": "css blocks autocomplete and go to definitions",
+  "version": "0.0.2",
+  "publisher": "vunguyentuan",
+  "engines": {
+    "vscode": "^1.22.0"
+  },
+  "categories": ["Languages"],
+  "keywords": ["css-blocks"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vunguyentuan/vscode-css-blocks"
+  },
+  "icon": "images/logo.png",
+  "activationEvents": [
+    "onLanguage:typescriptreact",
+    "onLanguage:javascriptreact"
+  ],
+  "main": "./src/extension",
+  "contributes": {
+    "commands": []
+  },
+  "scripts": {
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "typescript": "^2.6.1",
+    "vscode": "^1.1.6",
+    "eslint": "^4.11.0",
+    "@types/node": "^7.0.43",
+    "@types/mocha": "^2.2.42"
+  },
+  "dependencies": {
+    "lodash": "^4.17.10"
+  }
 }

@@ -2,7 +2,7 @@ const vscode_1 = require('vscode')
 const utils_1 = require('./utils')
 const path = require('path')
 const fs = require('fs')
-const _ = require('lodash')
+
 function getWords(line, position) {
   const headText = line.slice(0, position.character)
   const startIndex = headText.search(/[a-zA-Z0-9\._]*$/)
@@ -14,19 +14,19 @@ function getWords(line, position) {
   if (match === null) {
     return ''
   }
-  return match[1]
+
+  const fullMatch = match[1];
+
+  // "styles.icon.animate".slice(0, 35 - 25)
+  // styles.ico
+
+  const fullParts = fullMatch.split('.');
+  const parts = fullMatch.slice(0, position.character - startIndex).split('.');
+
+  return parts.map((part, index) => fullParts[index]).join('.')
 }
-function getTransformer(camelCaseConfig) {
-  switch (camelCaseConfig) {
-    case true:
-      return _.camelCase
-    case 'dashes':
-      return utils_1.dashesCamelCase
-    default:
-      return null
-  }
-}
-function getPosition(filePath, className, camelCaseConfig) {
+
+function getPosition(filePath, className) {
   const content = fs.readFileSync(filePath, { encoding: 'utf8' })
   const lines = content.split('\n').reduce((selectors, line, index) => {
     if (line.match(/.*[,{]/g)) {
@@ -41,46 +41,26 @@ function getPosition(filePath, className, camelCaseConfig) {
   let lineNumber = -1
   let character = -1
   let keyWord = className
-  const classTransformer = getTransformer(camelCaseConfig)
-  // if (camelCaseConfig !== true) {
-  //   // is false or 'dashes'
-  //   keyWord = `.${className}`
-  // }
+
   for (let i = 0; i < lines.length; i++) {
     const originalLine = lines[i]
-    /**
-     * The only way to guarantee that a position will be returned for a camelized class
-     * is to check after camelizing the source line.
-     * Doing the opposite -- uncamelizing the used classname -- would not always give
-     * correct result, as camelization is lossy.
-     * i.e. `.button--disabled`, `.button-disabled` both give same
-     * final class: `css.buttonDisabled`, and going back from this to that is not possble.
-     *
-     * But this has a drawback - camelization of a line may change the final
-     * positions of classes. But as of now, I don't see a better way, and getting this
-     * working is more important, also putting this functionality out there would help
-     * get more eyeballs and hopefully a better way.
-     */
-    const line = !classTransformer
-      ? originalLine.text
-      : classTransformer(originalLine.text)
+    
+    const line = originalLine.text
     character = line.indexOf(keyWord)
-    if (character === -1 && !!classTransformer) {
-      // if camelized match fails, and transformer is there
-      // try matching the un-camelized classnames too!
-      character = originalLine.text.indexOf(keyWord)
-    }
+    
     if (character !== -1) {
       lineNumber = originalLine.lineNumber
       break
     }
   }
+
   if (lineNumber === -1) {
     return null
   } else {
-    return new vscode_1.Position(lineNumber, character + 1)
+    return new vscode_1.Position(lineNumber, character)
   }
 }
+
 function isImportLineMatch(line, matches, current) {
   if (matches === null) {
     return false
@@ -94,16 +74,12 @@ function isImportLineMatch(line, matches, current) {
   )
 }
 
-class CSSModuleDefinitionProvider {
-  constructor(camelCaseConfig) {
-    this._camelCaseConfig = false
-    this._camelCaseConfig = camelCaseConfig
-  }
+class CSSBlockDefinitionProvider {
   provideDefinition(document, position, token) {
+    const lineText = document.lineAt(position.line).text;
     const currentDir = path.dirname(document.uri.fsPath)
-    const currentLine = utils_1.getCurrentLine(document, position)
-    const matches = utils_1.genImportRegExp('(\\S+)').exec(currentLine)
-    if (isImportLineMatch(currentLine, matches, position.character)) {
+    const matches = utils_1.genImportRegExp('(\\S+)').exec(lineText)
+    if (isImportLineMatch(lineText, matches, position.character)) {
       return Promise.resolve(
         new vscode_1.Location(
           vscode_1.Uri.file(path.resolve(currentDir, matches[2])),
@@ -111,20 +87,27 @@ class CSSModuleDefinitionProvider {
         )
       )
     }
-    const words = getWords(currentLine, position)
+
+    const words = getWords(lineText, position)
+
     if (words === '' || words.indexOf('.') === -1) {
       return Promise.resolve(null)
     }
-    const [obj, field] = words.split('.')
+
+    const [obj, ...fields] = words.split('.')
+    const field = fields.join('[state|')
     const importPath = utils_1.findImportPath(
       document.getText(),
       obj,
       currentDir
     )
+
     if (importPath === '') {
       return Promise.resolve(null)
     }
-    const targetPosition = getPosition(importPath, field, this._camelCaseConfig)
+
+    const targetPosition = getPosition(importPath, field)
+
     if (targetPosition === null) {
       return Promise.resolve(null)
     } else {
@@ -135,4 +118,4 @@ class CSSModuleDefinitionProvider {
   }
 }
 
-module.exports = CSSModuleDefinitionProvider
+module.exports = CSSBlockDefinitionProvider

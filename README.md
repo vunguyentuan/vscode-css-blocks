@@ -5,7 +5,7 @@ CSS Blocks support:
 - go to definition
 
 # Demo
-![](demo/demo.gif)
+![](images/demo.gif)
 
 
 ## Release Notes
