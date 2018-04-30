@@ -8,7 +8,7 @@
     "vscode": "^1.22.0"
   },
   "categories": ["Languages"],
-  "keywords": ["css-blocks"],
+  "keywords": ["css-block", "css", "css-blocks"],
   "repository": {
     "type": "git",
     "url": "https://github.com/vunguyentuan/vscode-css-blocks"
