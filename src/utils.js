@@ -47,10 +47,12 @@ function getSuggestions(filePath, keyword) {
   if (classNames !== null) {
     const uniqueClassNames = _.uniq(classNames).map(item => {
       const subclassName = item.slice(1)
+      const parent = ':scope'
       return {
         type: 'class',
         name: subclassName,
-        searchText: subclassName
+        parent: parent,
+        searchText: `${parent}${subclassName}`
       }
     })
 
@@ -59,21 +61,19 @@ function getSuggestions(filePath, keyword) {
 
   if (methods !== null) {
     const uniqueMethodNames = _.uniq(methods).map(item => {
-      const [selectorName, methodName] = item.split('[state|')
+      const [parent, methodName] = item.split('[state|')
       return {
         type: 'method',
         name: methodName,
-        selectorName: selectorName,
-        searchText: `${selectorName}[state|${methodName}`
+        parent: parent,
+        searchText: `${parent}[state|${methodName}`
       }
     })
 
     suggestions.push(...uniqueMethodNames)
   }
 
-  return keyword !== ''
-    ? suggestions.filter(item => item.searchText.indexOf(keyword) !== -1)
-    : suggestions
+  return suggestions.filter(item => item.searchText.indexOf(keyword) !== -1)
 }
 
 module.exports = {
