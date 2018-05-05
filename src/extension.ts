@@ -1,17 +1,18 @@
+
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-const vscode = require('vscode')
+import * as vscode from 'vscode';
 
-const CSSBlockProvider = require('./provider')
-const CSSBlockDefinitionProvider = require('./definition')
+import CSSBlockProvider from './provider';
+import CSSBlockDefinitionProvider from './definition';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-function activate(context) {
+function activate(context: vscode.ExtensionContext) {
   const mode = [
     { language: 'typescriptreact', scheme: 'file' },
     { language: 'javascriptreact', scheme: 'file' }
-  ]
+  ];
 
   context.subscriptions.push(
     vscode.languages.registerCompletionItemProvider(
@@ -19,16 +20,16 @@ function activate(context) {
       new CSSBlockProvider(),
       '.'
     )
-  )
+  );
   context.subscriptions.push(
     vscode.languages.registerDefinitionProvider(
       mode,
       new CSSBlockDefinitionProvider()
     )
-  )
+  );
 }
-exports.activate = activate
+exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate() {}
-exports.deactivate = deactivate
+exports.deactivate = deactivate;
