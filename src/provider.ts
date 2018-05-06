@@ -1,16 +1,15 @@
-import { CompletionItem, Position, TextDocument, CompletionItemProvider } from 'vscode';
+import * as path from "path";
+import { CompletionItem, CompletionItemProvider, Position, TextDocument } from "vscode";
 
 import {
   findImportPath,
+  getSuggestionKeyword,
   getSuggestions,
   shouldShowCompletion,
-  getSuggestionKeyword
-} from './utils';
+} from "./utils";
 
-import * as path from 'path';
-
-export default class CSSBlocksCompletionProvider implements CompletionItemProvider {
-  async provideCompletionItems(document: TextDocument, position: Position) : Promise<CompletionItem[]> {
+export class CSSBlocksCompletionProvider implements CompletionItemProvider {
+  async provideCompletionItems(document: TextDocument, position: Position): Promise<CompletionItem[]> {
     const lineText = document.lineAt(position.line).text;
     const currentDir = path.dirname(document.uri.fsPath);
 
@@ -22,11 +21,11 @@ export default class CSSBlocksCompletionProvider implements CompletionItemProvid
 
     const words = getSuggestionKeyword(lineText, position);
 
-    if (words === '' || words.indexOf('.') === -1) {
+    if (words === "" || words.indexOf(".") === -1) {
       return empty;
     }
 
-    const [obj, ...field] = words.split('.');
+    const [obj, ...field] = words.split(".");
 
     const importPath = findImportPath(document.getText(), obj, currentDir);
 

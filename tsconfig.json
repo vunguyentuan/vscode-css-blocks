@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "jsx": "preserve",
+        "jsxFactory": "h",
         "module": "commonjs",
         "target": "es6",
         "outDir": "out",
@@ -7,7 +9,6 @@
             "es6"
         ],
         "sourceMap": true,
-        "rootDir": "src",
         /* Strict Type-Checking Option */
         "strict": true,   /* enable all strict type-checking options */
         /* Additional Checks */
@@ -16,8 +17,13 @@
         // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
         // "noUnusedParameters": true,  /* Report errors on unused parameters. */
     },
+    "include": [
+      "src",
+      "test"
+    ],
     "exclude": [
         "node_modules",
-        ".vscode-test"
+        ".vscode-test",
+        "test/fixtures"
     ]
 }

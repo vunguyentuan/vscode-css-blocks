@@ -1,11 +1,11 @@
 import { postcss } from "opticss";
 
-import { Options, resolveConfiguration, BlockFactory, Block, BlockClass, Attribute } from "@css-blocks/core";
+import { Attribute, Block, BlockClass, BlockFactory, Options, isBlockClass, resolveConfiguration } from "@css-blocks/core";
 import { CompletionItem, CompletionItemKind, Position } from "vscode";
 
-export function getSuggetions(block: Block, fields: Array<string>) : Array<CompletionItem>{
+export function getSuggestions(block: Block, fields: Array<string>): Array<CompletionItem> {
   if (fields.length === 1) {
-    const result : Array<CompletionItem> = [];
+    const result: Array<CompletionItem> = [];
 
     const rootClassAttributes = block.rootClass.getAttributes();
 
@@ -25,19 +25,19 @@ export function getSuggetions(block: Block, fields: Array<string>) : Array<Compl
   }
 
   const blockClass = block.lookup(`.${fields[0]}`);
-  
+
   if (!blockClass) {
     return [];
   }
 
-  if (blockClass instanceof BlockClass) {
+  if (isBlockClass(blockClass)) {
     return blockClass.getAttributes().map(attr => new CompletionItem(attr.name, CompletionItemKind.Function));
   }
 
   return [];
 }
 
-export function getSourcePosition(block: Block, selector: string) : Position | undefined {
+export function getSourcePosition(block: Block, selector: string): Position | undefined {
   if (!block.stylesheet || !block.stylesheet.nodes) {
     return;
   }
@@ -67,13 +67,13 @@ export function getClassSourcePosition(cssClass: BlockClass | null) {
   return getSourcePosition(cssClass.block, selector);
 }
 
-export function getPositionByKeyword(block: Block, fields: Array<string>) : Position | undefined {
+export function getPositionByKeyword(block: Block, fields: Array<string>): Position | undefined {
   // styles.button ["button"]
   // either root attributes or sub-classes
   if (fields.length === 1) {
     const attr = block.rootClass.getAttribute(`[state|${fields[0]}]`);
     const cssClass = block.getClass(fields[0]);
-    
+
     return getAttrSourcePosition(attr) || getClassSourcePosition(cssClass);
   }
 
@@ -81,7 +81,7 @@ export function getPositionByKeyword(block: Block, fields: Array<string>) : Posi
   // find sub-class attributes
   if (fields.length === 2) {
     const blockClass = block.getClass(fields[0]);
-  
+
     if (!blockClass) {
       return;
     }
@@ -92,20 +92,12 @@ export function getPositionByKeyword(block: Block, fields: Array<string>) : Posi
       return getAttrSourcePosition(blockAttr);
     }
   }
-  
+
   return;
 }
 
-export function parse(filename: string, contents: string, cssBlocksOpts?: Options) {
-  const root = postcss.parse(contents);
-
+export function parse(filename: string, cssBlocksOpts?: Options) {
   const config = resolveConfiguration(cssBlocksOpts);
-
-  // Fetch block name from importer
-  let identifier = config.importer.identifier(null, filename, config);
-  let defaultName = config.importer.defaultName(identifier, config);
   let factory = new BlockFactory(config, postcss);
-
-  return factory.parse(root, filename, defaultName);
+  return factory.getBlockFromPath(filename);
 }
-

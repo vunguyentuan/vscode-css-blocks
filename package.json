@@ -25,7 +25,7 @@
     "onLanguage:typescriptreact",
     "onLanguage:javascriptreact"
   ],
-  "main": "./out/extension",
+  "main": "./out/src/extension",
   "contributes": {
     "commands": []
   },
@@ -34,9 +34,12 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    "test": "npm run compile && node ./node_modules/vscode/bin/test && tslint --project .",
+    "lint": "tslint --project .",
+    "lintfix": "tslint --fix --project ."
   },
   "devDependencies": {
+    "@opticss/code-style": "^0.3.0",
     "@types/lodash": "^4.14.108",
     "@types/mocha": "^2.2.42",
     "@types/node": "^7.0.43",
