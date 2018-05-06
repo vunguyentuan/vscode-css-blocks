@@ -1,64 +1,40 @@
-import { CompletionItem, CompletionItemKind, Position, TextDocument, CompletionItemProvider } from 'vscode';
+import { CompletionItem, Position, TextDocument, CompletionItemProvider } from 'vscode';
 
 import {
   findImportPath,
   getSuggestions,
-  SuggestionType,
+  shouldShowCompletion,
+  getSuggestionKeyword
 } from './utils';
 
-const path = require('path');
-
-// check if current character or last character is .
-function isTrigger(line: string, position: Position) {
-  const i = position.character - 1;
-  return line[i] === '.' || (i > 1 && line[i - 1] === '.');
-}
-
-function getWords(line: string, position: Position) {
-  const text = line.slice(0, position.character);
-  const index = text.search(/[a-zA-Z0-9\._]*$/);
-  if (index === -1) {
-    return '';
-  }
-
-  return text.slice(index);
-}
+import * as path from 'path';
 
 export default class CSSBlocksCompletionProvider implements CompletionItemProvider {
-  provideCompletionItems(document: TextDocument, position: Position) : Thenable<CompletionItem[]> {
+  async provideCompletionItems(document: TextDocument, position: Position) : Promise<CompletionItem[]> {
     const lineText = document.lineAt(position.line).text;
     const currentDir = path.dirname(document.uri.fsPath);
 
     const empty = Promise.resolve([]);
 
-    if (!isTrigger(lineText, position)) {
+    if (!shouldShowCompletion(lineText, position)) {
       return empty;
     }
 
-    const words = getWords(lineText, position);
+    const words = getSuggestionKeyword(lineText, position);
 
     if (words === '' || words.indexOf('.') === -1) {
       return empty;
     }
 
-    const [obj, ...fields] = words.split('.');
-    const field = fields.join('[state|');
+    const [obj, ...field] = words.split('.');
 
     const importPath = findImportPath(document.getText(), obj, currentDir);
-    if (importPath === '') {
+
+    // stop when no import statements
+    if (!importPath) {
       return empty;
     }
 
-    const suggestions = getSuggestions(importPath, field);
-
-    return Promise.resolve(
-      suggestions.map(({ name, type }) => {
-        if (type === SuggestionType.Method) {
-          return new CompletionItem(name, CompletionItemKind.Method);
-        }
-
-        return new CompletionItem(name, CompletionItemKind.Variable);
-      })
-    );
+    return getSuggestions(importPath, field);
   }
 }
